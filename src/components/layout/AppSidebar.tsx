@@ -24,8 +24,8 @@ export function AppSidebar() {
   const isCollapsed = state === "collapsed";
 
   const getNavClasses = ({ isActive }: { isActive: boolean }) =>
-    isActive 
-      ? "bg-sidebar-accent text-sidebar-accent-foreground font-medium" 
+    isActive
+      ? "bg-sidebar-foreground text-sidebar-foreground font-medium"
       : "hover:bg-sidebar-accent/50 hover:text-sidebar-accent-foreground";
 
   return (

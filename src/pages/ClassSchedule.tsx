@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -188,7 +189,7 @@ export default function ClassSchedule() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold bg-gradient-primary bg-clip-text text-transparent">
+          <h1 className="text-3xl font-bold bg-primary bg-clip-text text-transparent">
             Class Schedule
           </h1>
           <p className="text-muted-foreground mt-2">
@@ -198,7 +199,7 @@ export default function ClassSchedule() {
         
         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
           <DialogTrigger asChild>
-            <Button onClick={handleAdd} className="bg-gradient-primary hover:opacity-90">
+            <Button onClick={handleAdd} className="bg-primary-light text-primary hover:bg-primary hover:text-primary-foreground hover:opacity-90">
               <Plus className="h-4 w-4 mr-2" />
               Add Class
             </Button>
@@ -324,7 +325,7 @@ export default function ClassSchedule() {
                 <Button
                   type="submit"
                   disabled={createMutation.isPending || updateMutation.isPending}
-                  className="bg-gradient-primary hover:opacity-90"
+                  className="bg-primary hover:opacity-90"
                 >
                   {editingClass ? 'Update Class' : 'Add Class'}
                 </Button>
@@ -356,7 +357,7 @@ export default function ClassSchedule() {
               <p className="text-muted-foreground mt-2">
                 Add your first class to get started with your schedule.
               </p>
-              <Button onClick={handleAdd} className="mt-4 bg-gradient-primary hover:opacity-90">
+              <Button onClick={handleAdd} className="mt-4 bg-primary-light text-primary hover:text-primary-light hover:opacity-90">
                 <Plus className="h-4 w-4 mr-2" />
                 Add Your First Class
               </Button>

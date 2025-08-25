@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { BookOpen, Calendar, Clock, GraduationCap } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
@@ -57,7 +58,7 @@ export default function Dashboard() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-bold bg-gradient-primary bg-clip-text text-transparent">
+        <h1 className="text-3xl font-bold bg-primary bg-clip-text text-transparent">
           Dashboard
         </h1>
         <p className="text-muted-foreground mt-2">
@@ -123,7 +124,7 @@ export default function Dashboard() {
           <CardContent>
             {todayClasses.length === 0 ? (
               <div className="text-center py-8">
-                <GraduationCap className="mx-auto h-12 w-12 text-muted-foreground" />
+                <GraduationCap className="mx-auto h-12 w-12 text-muted-primary" />
                 <p className="text-muted-foreground mt-2">No classes today</p>
                 <Button
                   onClick={() => navigate('/schedule')}

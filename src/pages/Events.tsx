@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -185,7 +186,7 @@ export default function Events() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold bg-gradient-primary bg-clip-text text-transparent">
+          <h1 className="text-3xl font-bold bg-primary bg-clip-text text-transparent">
             Events
           </h1>
           <p className="text-muted-foreground mt-2">
@@ -195,7 +196,7 @@ export default function Events() {
         
         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
           <DialogTrigger asChild>
-            <Button onClick={handleAdd} className="bg-gradient-primary hover:opacity-90">
+            <Button onClick={handleAdd} className="bg-primary-light text-primary hover:text-primary-light hover:opacity-90">
               <Plus className="h-4 w-4 mr-2" />
               Add Event
             </Button>
@@ -290,7 +291,7 @@ export default function Events() {
                 <Button
                   type="submit"
                   disabled={createMutation.isPending || updateMutation.isPending || !formData.event_date}
-                  className="bg-gradient-primary hover:opacity-90"
+                  className="bg-primary hover:opacity-90"
                 >
                   {editingEvent ? 'Update Event' : 'Add Event'}
                 </Button>
@@ -322,7 +323,7 @@ export default function Events() {
               <p className="text-muted-foreground mt-2">
                 Add your first event to get started.
               </p>
-              <Button onClick={handleAdd} className="mt-4 bg-gradient-primary hover:opacity-90">
+              <Button onClick={handleAdd} className="mt-4 bg-primary-light text-primary hover:bg-primary hover:text-primary-foreground hover:opacity-90">
                 <Plus className="h-4 w-4 mr-2" />
                 Add Your First Event
               </Button>

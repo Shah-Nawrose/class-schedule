@@ -19,9 +19,9 @@ export function AppLayout({ children }: AppLayoutProps) {
             <SidebarTrigger className="mr-4" />
             <div className="flex items-center gap-3">
               <div className="h-8 w-8 bg-gradient-primary rounded-lg flex items-center justify-center">
-                <span className="text-primary-foreground font-bold text-sm">CS</span>
+                <span className="text-primary font-bold text-sm">CS</span>
               </div>
-              <h1 className="text-xl font-semibold bg-gradient-primary bg-clip-text text-transparent">
+              <h1 className="text-xl font-semibold bg-primary bg-clip-text text-transparent">
                 Class Schedule Planner
               </h1>
             </div>
