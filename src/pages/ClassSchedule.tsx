@@ -43,6 +43,8 @@ import {
   MapPin,
   User,
   BookOpen,
+  ChevronDown,
+  ChevronUp,
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import {
@@ -83,6 +85,7 @@ export default function ClassSchedule() {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingClass, setEditingClass] = useState<ClassData | null>(null);
   const [timeError, setTimeError] = useState("");
+  const [expandedDays, setExpandedDays] = useState<Record<string, boolean>>({});
   const [formData, setFormData] = useState<ClassData>({
     day: "",
     start_time: "",
@@ -202,6 +205,7 @@ export default function ClassSchedule() {
       section: "",
     });
   };
+
   const handleTimeChange = (
     field: "start_time" | "end_time",
     value: string
@@ -254,6 +258,13 @@ export default function ClassSchedule() {
     setIsDialogOpen(true);
   };
 
+  const toggleDayExpansion = (day: string) => {
+    setExpandedDays(prev => ({
+      ...prev,
+      [day]: !prev[day]
+    }));
+  };
+
   const dayOrder = {
     Monday: 1,
     Tuesday: 2,
@@ -263,6 +274,7 @@ export default function ClassSchedule() {
     Saturday: 6,
     Sunday: 7,
   };
+  
   const sortedClasses = [...classes].sort((a, b) => {
     if (a.day !== b.day) {
       return (
@@ -273,14 +285,23 @@ export default function ClassSchedule() {
     return a.start_time.localeCompare(b.start_time);
   });
 
+  // Group classes by day for mobile view
+  const classesByDay = sortedClasses.reduce((acc, classItem) => {
+    if (!acc[classItem.day]) {
+      acc[classItem.day] = [];
+    }
+    acc[classItem.day].push(classItem);
+    return acc;
+  }, {} as Record<string, typeof sortedClasses>);
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold bg-primary bg-clip-text text-transparent">
+          <h1 className="text-2xl lg:text-3xl font-bold bg-primary bg-clip-text text-transparent">
             Class Schedule
           </h1>
-          <p className="text-muted-foreground mt-2">
+          <p className="text-muted-foreground mt-2 text-sm lg:text-base">
             Manage your weekly class schedule
           </p>
         </div>
@@ -290,13 +311,15 @@ export default function ClassSchedule() {
             <Button
               onClick={handleAdd}
               className="bg-primary-light text-primary hover:bg-primary hover:text-primary-foreground hover:opacity-90"
+              size="sm"
             >
               <Plus className="h-4 w-4 mr-2" />
-              Add Class
+              <span className="hidden sm:inline">Add Class</span>
+              <span className="sm:hidden">Add</span>
             </Button>
           </DialogTrigger>
 
-          <DialogContent className="max-w-2xl">
+          <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
             <DialogHeader>
               <DialogTitle>
                 {editingClass ? "Edit Class" : "Add New Class"}
@@ -309,7 +332,7 @@ export default function ClassSchedule() {
             </DialogHeader>
 
             <form onSubmit={handleSubmit} className="space-y-4">
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label htmlFor="day">Day</Label>
                   <Select
@@ -348,7 +371,7 @@ export default function ClassSchedule() {
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label htmlFor="start_time">Start Time</Label>
                   <Input
@@ -380,7 +403,7 @@ export default function ClassSchedule() {
                 <p className="text-sm text-destructive">{timeError}</p>
               )}
 
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label htmlFor="course_code">Course Code</Label>
                   <Input
@@ -497,130 +520,231 @@ export default function ClassSchedule() {
               </Button>
             </div>
           ) : (
-            <div className="rounded-lg border overflow-hidden">
-              <Table>
-                <TableHeader>
-                  <TableRow className="bg-table-header hover:bg-table-header">
-                    <TableHead className="text-primary-dark font-bold">
-                      Day
-                    </TableHead>
-                    <TableHead className="text-primary-dark font-bold">
-                      Time Slot
-                    </TableHead>
-                    <TableHead className="text-primary-dark font-bold">
-                      Course Code
-                    </TableHead>
-                    <TableHead className="text-primary-dark font-bold">
-                      Course Title
-                    </TableHead>
-                    <TableHead className="text-primary-dark font-bold">
-                      Teacher Code
-                    </TableHead>
-                    <TableHead className="text-primary-dark font-bold">
-                      Room
-                    </TableHead>
-                    <TableHead className="text-primary-dark font-bold">
-                      Section
-                    </TableHead>
-                    <TableHead className="text-primary-dark font-bold">
-                      Actions
-                    </TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {sortedClasses.map((classItem, index) => (
-                    <TableRow
-                      key={classItem.id}
-                      className={`${
-                        index % 2 === 0 ? "bg-table-row-even" : ""
-                      } hover:bg-table-row-hover transition-colors`}
-                    >
-                      <TableCell className="font-medium">
-                        {classItem.day}
-                      </TableCell>
-                      <TableCell>
-                        <div className="flex items-center gap-1">
-                          <Clock className="h-4 w-4 text-muted-foreground" />
-                          {classItem.start_time} - {classItem.end_time}
-                        </div>
-                      </TableCell>
-                      <TableCell>
-                        <span className="font-mono font-semibold text-primary">
-                          {classItem.course_code}
-                        </span>
-                      </TableCell>
-                      <TableCell className="max-w-xs">
-                        <span
-                          className="truncate block"
-                          title={classItem.course_title}
-                        >
-                          {classItem.course_title}
-                        </span>
-                      </TableCell>
-                      <TableCell>
-                        <div className="flex items-center gap-1">
-                          <User className="h-4 w-4 text-muted-foreground" />
-                          {classItem.teacher_code || "-"}
-                        </div>
-                      </TableCell>
-                      <TableCell>
-                        <div className="flex items-center gap-1">
-                          <MapPin className="h-4 w-4 text-muted-foreground" />
-                          {classItem.room || "-"}
-                        </div>
-                      </TableCell>
-                      <TableCell>{classItem.section || "-"}</TableCell>
-                      <TableCell>
-                        <div className="flex items-center gap-2">
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => handleEdit(classItem)}
-                            className="h-8 w-8 p-0"
-                          >
-                            <Edit className="h-4 w-4" />
-                          </Button>
-
-                          <AlertDialog>
-                            <AlertDialogTrigger asChild>
-                              <Button
-                                variant="ghost"
-                                size="sm"
-                                className="h-8 w-8 p-0 text-destructive hover:text-destructive"
-                              >
-                                <Trash2 className="h-4 w-4" />
-                              </Button>
-                            </AlertDialogTrigger>
-                            <AlertDialogContent>
-                              <AlertDialogHeader>
-                                <AlertDialogTitle>
-                                  Delete Class
-                                </AlertDialogTitle>
-                                <AlertDialogDescription>
-                                  Are you sure you want to delete this class?
-                                  This action cannot be undone.
-                                </AlertDialogDescription>
-                              </AlertDialogHeader>
-                              <AlertDialogFooter>
-                                <AlertDialogCancel>Cancel</AlertDialogCancel>
-                                <AlertDialogAction
-                                  onClick={() =>
-                                    deleteMutation.mutate(classItem.id)
-                                  }
-                                  className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-                                >
-                                  Delete
-                                </AlertDialogAction>
-                              </AlertDialogFooter>
-                            </AlertDialogContent>
-                          </AlertDialog>
-                        </div>
-                      </TableCell>
+            <>
+              {/* Desktop Table View */}
+              <div className="hidden lg:block rounded-lg border overflow-hidden">
+                <Table>
+                  <TableHeader>
+                    <TableRow className="bg-table-header hover:bg-table-header">
+                      <TableHead className="text-primary-dark font-bold">
+                        Day
+                      </TableHead>
+                      <TableHead className="text-primary-dark font-bold">
+                        Time Slot
+                      </TableHead>
+                      <TableHead className="text-primary-dark font-bold">
+                        Course Code
+                      </TableHead>
+                      <TableHead className="text-primary-dark font-bold">
+                        Course Title
+                      </TableHead>
+                      <TableHead className="text-primary-dark font-bold">
+                        Teacher Code
+                      </TableHead>
+                      <TableHead className="text-primary-dark font-bold">
+                        Room
+                      </TableHead>
+                      <TableHead className="text-primary-dark font-bold">
+                        Section
+                      </TableHead>
+                      <TableHead className="text-primary-dark font-bold">
+                        Actions
+                      </TableHead>
                     </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </div>
+                  </TableHeader>
+                  <TableBody>
+                    {sortedClasses.map((classItem, index) => (
+                      <TableRow
+                        key={classItem.id}
+                        className={`${
+                          index % 2 === 0 ? "bg-table-row-even" : ""
+                        } hover:bg-table-row-hover transition-colors`}
+                      >
+                        <TableCell className="font-medium">
+                          {classItem.day}
+                        </TableCell>
+                        <TableCell>
+                          <div className="flex items-center gap-1">
+                            <Clock className="h-4 w-4 text-muted-foreground" />
+                            {classItem.start_time} - {classItem.end_time}
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          <span className="font-mono font-semibold text-primary">
+                            {classItem.course_code}
+                          </span>
+                        </TableCell>
+                        <TableCell className="max-w-xs">
+                          <span
+                            className="truncate block"
+                            title={classItem.course_title}
+                          >
+                            {classItem.course_title}
+                          </span>
+                        </TableCell>
+                        <TableCell>
+                          <div className="flex items-center gap-1">
+                            <User className="h-4 w-4 text-muted-foreground" />
+                            {classItem.teacher_code || "-"}
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          <div className="flex items-center gap-1">
+                            <MapPin className="h-4 w-4 text-muted-foreground" />
+                            {classItem.room || "-"}
+                          </div>
+                        </TableCell>
+                        <TableCell>{classItem.section || "-"}</TableCell>
+                        <TableCell>
+                          <div className="flex items-center gap-2">
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => handleEdit(classItem)}
+                              className="h-8 w-8 p-0"
+                            >
+                              <Edit className="h-4 w-4" />
+                            </Button>
+
+                            <AlertDialog>
+                              <AlertDialogTrigger asChild>
+                                <Button
+                                  variant="ghost"
+                                  size="sm"
+                                  className="h-8 w-8 p-0 text-destructive hover:text-destructive"
+                                >
+                                  <Trash2 className="h-4 w-4" />
+                                </Button>
+                              </AlertDialogTrigger>
+                              <AlertDialogContent>
+                                <AlertDialogHeader>
+                                  <AlertDialogTitle>
+                                    Delete Class
+                                  </AlertDialogTitle>
+                                  <AlertDialogDescription>
+                                    Are you sure you want to delete this class?
+                                    This action cannot be undone.
+                                  </AlertDialogDescription>
+                                </AlertDialogHeader>
+                                <AlertDialogFooter>
+                                  <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                  <AlertDialogAction
+                                    onClick={() =>
+                                      deleteMutation.mutate(classItem.id)
+                                    }
+                                    className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                                  >
+                                    Delete
+                                  </AlertDialogAction>
+                                </AlertDialogFooter>
+                              </AlertDialogContent>
+                            </AlertDialog>
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </div>
+
+              {/* Mobile Card View */}
+              <div className="lg:hidden space-y-4">
+                {Object.entries(classesByDay).map(([day, dayClasses]) => (
+                  <Card key={day} className="overflow-hidden">
+                    <CardHeader 
+                      className="py-3 bg-muted/50 cursor-pointer"
+                      onClick={() => toggleDayExpansion(day)}
+                    >
+                      <div className="flex items-center justify-between">
+                        <CardTitle className="text-lg">{day}</CardTitle>
+                        {expandedDays[day] ? (
+                          <ChevronUp className="h-5 w-5" />
+                        ) : (
+                          <ChevronDown className="h-5 w-5" />
+                        )}
+                      </div>
+                    </CardHeader>
+                    
+                    {expandedDays[day] && (
+                      <CardContent className="p-0">
+                        {dayClasses.map((classItem) => (
+                          <div key={classItem.id} className="p-4 border-b last:border-b-0">
+                            <div className="flex justify-between items-start mb-2">
+                              <div className="font-semibold text-primary">
+                                {classItem.course_code}
+                                {classItem.section && ` (${classItem.section})`}
+                              </div>
+                              <div className="flex space-x-1">
+                                <Button
+                                  variant="ghost"
+                                  size="sm"
+                                  onClick={() => handleEdit(classItem)}
+                                  className="h-7 w-7 p-0"
+                                >
+                                  <Edit className="h-3 w-3" />
+                                </Button>
+                                <AlertDialog>
+                                  <AlertDialogTrigger asChild>
+                                    <Button
+                                      variant="ghost"
+                                      size="sm"
+                                      className="h-7 w-7 p-0 text-destructive hover:text-destructive"
+                                    >
+                                      <Trash2 className="h-3 w-3" />
+                                    </Button>
+                                  </AlertDialogTrigger>
+                                  <AlertDialogContent>
+                                    <AlertDialogHeader>
+                                      <AlertDialogTitle>
+                                        Delete Class
+                                      </AlertDialogTitle>
+                                      <AlertDialogDescription>
+                                        Are you sure you want to delete this class?
+                                        This action cannot be undone.
+                                      </AlertDialogDescription>
+                                    </AlertDialogHeader>
+                                    <AlertDialogFooter>
+                                      <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                      <AlertDialogAction
+                                        onClick={() =>
+                                          deleteMutation.mutate(classItem.id)
+                                        }
+                                        className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                                      >
+                                        Delete
+                                      </AlertDialogAction>
+                                    </AlertDialogFooter>
+                                  </AlertDialogContent>
+                                </AlertDialog>
+                              </div>
+                            </div>
+                            
+                            <div className="text-sm mb-1 font-medium">
+                              {classItem.course_title}
+                            </div>
+                            
+                            <div className="flex items-center text-sm text-muted-foreground mb-1">
+                              <Clock className="h-3 w-3 mr-1" />
+                              {classItem.start_time} - {classItem.end_time}
+                            </div>
+                            
+                            <div className="flex items-center text-sm text-muted-foreground mb-1">
+                              <User className="h-3 w-3 mr-1" />
+                              {classItem.teacher_code || "No teacher assigned"}
+                            </div>
+                            
+                            <div className="flex items-center text-sm text-muted-foreground">
+                              <MapPin className="h-3 w-3 mr-1" />
+                              {classItem.room || "No room assigned"}
+                            </div>
+                          </div>
+                        ))}
+                      </CardContent>
+                    )}
+                  </Card>
+                ))}
+              </div>
+            </>
           )}
         </CardContent>
       </Card>

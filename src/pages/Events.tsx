@@ -29,7 +29,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Calendar, Plus, Edit, Trash2, Clock, FileText } from "lucide-react";
+import { Calendar, Plus, Edit, Trash2, Clock, FileText, ChevronDown, ChevronUp } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import {
   AlertDialog,
@@ -63,6 +63,7 @@ export default function Events() {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingEvent, setEditingEvent] = useState<EventData | null>(null);
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined);
+  const [expandedEventId, setExpandedEventId] = useState<string | null>(null);
   const [formData, setFormData] = useState<EventData>({
     event_title: "",
     event_date: "",
@@ -222,6 +223,14 @@ export default function Events() {
         ...prev,
         event_date: format(date, "yyyy-MM-dd"),
       }));
+    }
+  };
+
+  const toggleEventExpansion = (eventId: string) => {
+    if (expandedEventId === eventId) {
+      setExpandedEventId(null);
+    } else {
+      setExpandedEventId(eventId);
     }
   };
 
@@ -430,126 +439,249 @@ export default function Events() {
               </Button>
             </div>
           ) : (
-            <div className="rounded-lg border overflow-hidden">
-              <Table>
-                <TableHeader>
-                  <TableRow className="bg-table-header hover:bg-table-header">
-                    <TableHead className="text-primary-dark font-bold">
-                      Date
-                    </TableHead>
-                    <TableHead className="text-primary-dark font-bold">
-                      Event Title
-                    </TableHead>
-                    <TableHead className="text-primary-dark font-bold">
-                      Time Slot
-                    </TableHead>
-                    <TableHead className="text-primary-dark font-bold">
-                      Description
-                    </TableHead>
-                    <TableHead className="text-primary-dark font-bold">
-                      Actions
-                    </TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {events.map((event, index) => (
-                    <TableRow
-                      key={event.id}
-                      className={`${
-                        index % 2 === 0 ? "bg-table-row-even" : ""
-                      } hover:bg-table-row-hover transition-colors`}
-                    >
-                      <TableCell className="font-medium">
-                        {format(parseISO(event.event_date), "MMM dd, yyyy")}
-                      </TableCell>
-                      <TableCell>
-                        <span className="font-semibold text-primary">
-                          {event.event_title}
-                        </span>
-                      </TableCell>
-                      <TableCell>
-                        <div className="flex items-center gap-1">
-                          <Clock className="h-4 w-4 text-muted-foreground" />
-                          {event.start_time && event.end_time ? (
-                            `${event.start_time} - ${event.end_time}`
-                          ) : event.start_time ? (
-                            `${event.start_time}`
-                          ) : event.end_time ? (
-                            `${event.end_time}`
-                          ) : (
-                            <span className="text-muted-foreground italic">
-                              No Time Slot
-                            </span>
-                          )}
-                        </div>
-                      </TableCell>
-
-                      <TableCell className="max-w-xs">
-                        <div className="flex items-start gap-1">
-                          <FileText className="h-4 w-4 text-muted-foreground mt-0.5 flex-shrink-0" />
-                          <span
-                            className={`truncate ${
-                              !event.description
-                                ? "text-muted-foreground italic"
-                                : ""
-                            }`}
-                            title={event.description || ""}
-                          >
-                            {event.description || "No Description"}
-                          </span>
-                        </div>
-                      </TableCell>
-                      <TableCell>
-                        <div className="flex items-center gap-2">
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => handleEdit(event)}
-                            className="h-8 w-8 p-0"
-                          >
-                            <Edit className="h-4 w-4" />
-                          </Button>
-
-                          <AlertDialog>
-                            <AlertDialogTrigger asChild>
-                              <Button
-                                variant="ghost"
-                                size="sm"
-                                className="h-8 w-8 p-0 text-destructive hover:text-destructive"
-                              >
-                                <Trash2 className="h-4 w-4" />
-                              </Button>
-                            </AlertDialogTrigger>
-                            <AlertDialogContent>
-                              <AlertDialogHeader>
-                                <AlertDialogTitle>
-                                  Delete Event
-                                </AlertDialogTitle>
-                                <AlertDialogDescription>
-                                  Are you sure you want to delete this event?
-                                  This action cannot be undone.
-                                </AlertDialogDescription>
-                              </AlertDialogHeader>
-                              <AlertDialogFooter>
-                                <AlertDialogCancel>Cancel</AlertDialogCancel>
-                                <AlertDialogAction
-                                  onClick={() =>
-                                    deleteMutation.mutate(event.id)
-                                  }
-                                  className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-                                >
-                                  Delete
-                                </AlertDialogAction>
-                              </AlertDialogFooter>
-                            </AlertDialogContent>
-                          </AlertDialog>
-                        </div>
-                      </TableCell>
+            <>
+              {/* Desktop Table View */}
+              <div className="hidden lg:block rounded-lg border overflow-hidden">
+                <Table>
+                  <TableHeader>
+                    <TableRow className="bg-table-header hover:bg-table-header">
+                      <TableHead className="text-primary-dark font-bold">
+                        Date
+                      </TableHead>
+                      <TableHead className="text-primary-dark font-bold">
+                        Event Title
+                      </TableHead>
+                      <TableHead className="text-primary-dark font-bold">
+                        Time Slot
+                      </TableHead>
+                      <TableHead className="text-primary-dark font-bold">
+                        Description
+                      </TableHead>
+                      <TableHead className="text-primary-dark font-bold">
+                        Actions
+                      </TableHead>
                     </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </div>
+                  </TableHeader>
+                  <TableBody>
+                    {events.map((event, index) => (
+                      <TableRow
+                        key={event.id}
+                        className={`${
+                          index % 2 === 0 ? "bg-table-row-even" : ""
+                        } hover:bg-table-row-hover transition-colors`}
+                      >
+                        <TableCell className="font-medium">
+                          {format(parseISO(event.event_date), "MMM dd, yyyy")}
+                        </TableCell>
+                        <TableCell>
+                          <span className="font-semibold text-primary">
+                            {event.event_title}
+                          </span>
+                        </TableCell>
+                        <TableCell>
+                          <div className="flex items-center gap-1">
+                            <Clock className="h-4 w-4 text-muted-foreground" />
+                            {event.start_time && event.end_time ? (
+                              `${event.start_time} - ${event.end_time}`
+                            ) : event.start_time ? (
+                              `${event.start_time}`
+                            ) : event.end_time ? (
+                              `${event.end_time}`
+                            ) : (
+                              <span className="text-muted-foreground italic">
+                                No Time Slot
+                              </span>
+                            )}
+                          </div>
+                        </TableCell>
+
+                        <TableCell className="max-w-xs">
+                          <div className="flex items-start gap-1">
+                            <FileText className="h-4 w-4 text-muted-foreground mt-0.5 flex-shrink-0" />
+                            <span
+                              className={`truncate ${
+                                !event.description
+                                  ? "text-muted-foreground italic"
+                                  : ""
+                              }`}
+                              title={event.description || ""}
+                            >
+                              {event.description || "No Description"}
+                            </span>
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          <div className="flex items-center gap-2">
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => handleEdit(event)}
+                              className="h-8 w-8 p-0"
+                            >
+                              <Edit className="h-4 w-4" />
+                            </Button>
+
+                            <AlertDialog>
+                              <AlertDialogTrigger asChild>
+                                <Button
+                                  variant="ghost"
+                                  size="sm"
+                                  className="h-8 w-8 p-0 text-destructive hover:text-destructive"
+                                >
+                                  <Trash2 className="h-4 w-4" />
+                                </Button>
+                              </AlertDialogTrigger>
+                              <AlertDialogContent>
+                                <AlertDialogHeader>
+                                  <AlertDialogTitle>
+                                    Delete Event
+                                  </AlertDialogTitle>
+                                  <AlertDialogDescription>
+                                    Are you sure you want to delete this event?
+                                    This action cannot be undone.
+                                  </AlertDialogDescription>
+                                </AlertDialogHeader>
+                                <AlertDialogFooter>
+                                  <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                  <AlertDialogAction
+                                    onClick={() =>
+                                      deleteMutation.mutate(event.id)
+                                    }
+                                    className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                                  >
+                                    Delete
+                                  </AlertDialogAction>
+                                </AlertDialogFooter>
+                              </AlertDialogContent>
+                            </AlertDialog>
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </div>
+
+              {/* Mobile/Tablet Card View */}
+              <div className="lg:hidden space-y-4">
+                {events.map((event) => (
+                  <Card 
+                    key={event.id} 
+                    className="overflow-hidden transition-all"
+                  >
+                    <CardContent className="p-0">
+                      <div 
+                        className="flex items-center justify-between p-4 cursor-pointer"
+                        onClick={() => toggleEventExpansion(event.id)}
+                      >
+                        <div className="flex items-center gap-3">
+                          <div className="bg-primary/10 p-2 rounded-lg">
+                            <Calendar className="h-5 w-5 text-primary" />
+                          </div>
+                          <div>
+                            <h3 className="font-semibold text-primary">
+                              {event.event_title}
+                            </h3>
+                            <p className="text-sm text-muted-foreground">
+                              {format(parseISO(event.event_date), "MMM dd, yyyy")}
+                            </p>
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          {event.start_time && (
+                            <div className="bg-muted px-2 py-1 rounded-md text-sm flex items-center gap-1">
+                              <Clock className="h-3 w-3" />
+                              <span>{event.start_time}{event.end_time ? ` - ${event.end_time}` : ''}</span>
+                            </div>
+                          )}
+                          <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+                            {expandedEventId === event.id ? (
+                              <ChevronUp className="h-4 w-4" />
+                            ) : (
+                              <ChevronDown className="h-4 w-4" />
+                            )}
+                          </Button>
+                        </div>
+                      </div>
+                      
+                      {expandedEventId === event.id && (
+                        <div className="px-4 pb-4 pt-0 border-t">
+                          <div className="mt-3 space-y-3">
+                            {(event.start_time || event.end_time) && (
+                              <div className="flex items-center gap-2">
+                                <Clock className="h-4 w-4 text-muted-foreground flex-shrink-0" />
+                                <span className="text-sm">
+                                  {event.start_time && event.end_time 
+                                    ? `${event.start_time} - ${event.end_time}`
+                                    : event.start_time 
+                                      ? `Starts at ${event.start_time}`
+                                      : `Ends at ${event.end_time}`
+                                  }
+                                </span>
+                              </div>
+                            )}
+                            
+                            {event.description && (
+                              <div className="flex items-start gap-2">
+                                <FileText className="h-4 w-4 text-muted-foreground mt-0.5 flex-shrink-0" />
+                                <p className="text-sm">{event.description}</p>
+                              </div>
+                            )}
+                            
+                            <div className="flex items-center gap-2 pt-2">
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={() => handleEdit(event)}
+                                className="flex-1"
+                              >
+                                <Edit className="h-4 w-4 mr-1" />
+                                Edit
+                              </Button>
+                              
+                              <AlertDialog>
+                                <AlertDialogTrigger asChild>
+                                  <Button
+                                    variant="destructive"
+                                    size="sm"
+                                    className="flex-1"
+                                  >
+                                    <Trash2 className="h-4 w-4 mr-1" />
+                                    Delete
+                                  </Button>
+                                </AlertDialogTrigger>
+                                <AlertDialogContent>
+                                  <AlertDialogHeader>
+                                    <AlertDialogTitle>
+                                      Delete Event
+                                    </AlertDialogTitle>
+                                    <AlertDialogDescription>
+                                      Are you sure you want to delete this event?
+                                      This action cannot be undone.
+                                    </AlertDialogDescription>
+                                  </AlertDialogHeader>
+                                  <AlertDialogFooter>
+                                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                    <AlertDialogAction
+                                      onClick={() =>
+                                        deleteMutation.mutate(event.id)
+                                      }
+                                      className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                                    >
+                                      Delete
+                                    </AlertDialogAction>
+                                  </AlertDialogFooter>
+                                </AlertDialogContent>
+                              </AlertDialog>
+                            </div>
+                          </div>
+                        </div>
+                      )}
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            </>
           )}
         </CardContent>
       </Card>
