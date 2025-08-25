@@ -434,19 +434,19 @@ export default function Events() {
               <Table>
                 <TableHeader>
                   <TableRow className="bg-table-header hover:bg-table-header">
-                    <TableHead className="text-primary-foreground font-semibold">
+                    <TableHead className="text-primary-dark font-bold">
                       Date
                     </TableHead>
-                    <TableHead className="text-primary-foreground font-semibold">
+                    <TableHead className="text-primary-dark font-bold">
                       Event Title
                     </TableHead>
-                    <TableHead className="text-primary-foreground font-semibold">
+                    <TableHead className="text-primary-dark font-bold">
                       Time Slot
                     </TableHead>
-                    <TableHead className="text-primary-foreground font-semibold">
+                    <TableHead className="text-primary-dark font-bold">
                       Description
                     </TableHead>
-                    <TableHead className="text-primary-foreground font-semibold">
+                    <TableHead className="text-primary-dark font-bold">
                       Actions
                     </TableHead>
                   </TableRow>
