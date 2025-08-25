@@ -447,7 +447,7 @@ export default function Events() {
                       Description
                     </TableHead>
                     <TableHead className="text-primary-dark font-bold">
-                      Actions
+                      Action
                     </TableHead>
                   </TableRow>
                 </TableHeader>
