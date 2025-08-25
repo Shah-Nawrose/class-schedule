@@ -20,38 +20,56 @@ const navigation = [
 
 export function AppSidebar() {
   const { state } = useSidebar();
-  const location = useLocation();
   const isCollapsed = state === "collapsed";
+  const location = useLocation();
 
-  const getNavClasses = ({ isActive }: { isActive: boolean }) =>
-    isActive
-      ? "bg-sidebar-foreground text-sidebar-foreground font-medium"
-      : "hover:bg-sidebar-accent/50 hover:text-sidebar-accent-foreground";
+  const isActive = (url: string) =>
+    location.pathname === url || location.pathname.startsWith(url + "/");
 
   return (
     <Sidebar collapsible="icon">
-      <SidebarContent className="p-2">
+      <SidebarContent className="p-4">
         <SidebarGroup>
           <SidebarGroupLabel className={isCollapsed ? "sr-only" : ""}>
-            Navigation
+            <span className="font-bold text-lg tracking-wide text-gray-600 uppercase">
+              Class schedule
+            </span>
           </SidebarGroupLabel>
-          
-          <SidebarGroupContent>
-            <SidebarMenu>
-              {navigation.map((item) => (
-                <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton asChild>
-                    <NavLink 
-                      to={item.url} 
-                      end 
-                      className={getNavClasses}
-                    >
-                      <item.icon className="h-5 w-5" />
-                      {!isCollapsed && <span>{item.title}</span>}
-                    </NavLink>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
+          <hr className="my-2 border-gray-200" />
+          <SidebarGroupContent className="mt-4">
+            <SidebarMenu className="flex flex-col gap-3">
+              {navigation.map((item) => {
+                const active = isActive(item.url);
+                return (
+                  <SidebarMenuItem key={item.title} className="relative">
+                    <SidebarMenuButton asChild isActive={active}>
+                      <NavLink
+                        to={item.url}
+                        end
+                        className={`flex items-center gap-3 p-3 rounded-lg transition-all duration-300 relative ${
+                          active
+                            ? "bg-black text-white font-semibold shadow-md"
+                            : "text-gray-700 hover:bg-gray-100 hover:text-black"
+                        }`}
+                      >
+                        {/* Active left indicator */}
+                        {active && !isCollapsed && (
+                          <span className="absolute left-0 top-1/4 h-1/2 w-1 bg-blue-500 rounded-r-full transition-all" />
+                        )}
+
+                        <item.icon
+                          className={`h-6 w-6 transition-colors ${
+                            active ? "text-white" : "text-gray-500 group-hover:text-black"
+                          }`}
+                        />
+                        {!isCollapsed && (
+                          <span className="text-sm md:text-base">{item.title}</span>
+                        )}
+                      </NavLink>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                );
+              })}
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>

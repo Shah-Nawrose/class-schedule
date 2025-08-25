@@ -1,22 +1,22 @@
-# Welcome to your Lovable project
+# Welcome to your SHAH project
 
 ## Project info
 
-**URL**: https://lovable.dev/projects/ce02c163-8727-45ec-86a6-4684e23fe8a1
+**URL**: https://SHAH.dev/projects/ce02c163-8727-45ec-86a6-4684e23fe8a1
 
 ## How can I edit this code?
 
 There are several ways of editing your application.
 
-**Use Lovable**
+**Use SHAH**
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/ce02c163-8727-45ec-86a6-4684e23fe8a1) and start prompting.
+Simply visit the [SHAH Project](https://SHAH.dev/projects/ce02c163-8727-45ec-86a6-4684e23fe8a1) and start prompting.
 
-Changes made via Lovable will be committed automatically to this repo.
+Changes made via SHAH will be committed automatically to this repo.
 
 **Use your preferred IDE**
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in SHAH.
 
 The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
 
@@ -62,12 +62,12 @@ This project is built with:
 
 ## How can I deploy this project?
 
-Simply open [Lovable](https://lovable.dev/projects/ce02c163-8727-45ec-86a6-4684e23fe8a1) and click on Share -> Publish.
+Simply open [SHAH](https://SHAH.dev/projects/ce02c163-8727-45ec-86a6-4684e23fe8a1) and click on Share -> Publish.
 
-## Can I connect a custom domain to my Lovable project?
+## Can I connect a custom domain to my SHAH project?
 
 Yes, you can!
 
 To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
 
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
+Read more here: [Setting up a custom domain](https://docs.SHAH.dev/tips-tricks/custom-domain#step-by-step-guide)
