@@ -136,7 +136,7 @@ export default function Dashboard() {
               </div>
             ) : (
               <div className="space-y-3">
-                {todayClasses.slice(0, 3).map((classItem: any) => (
+                {todayClasses.slice(0, 5).map((classItem: any) => (
                   <div key={classItem.id} className="flex items-center justify-between p-3 bg-secondary/50 rounded-lg">
                     <div>
                       <p className="font-medium">{classItem.course_code}</p>
@@ -148,7 +148,7 @@ export default function Dashboard() {
                     </div>
                   </div>
                 ))}
-                {todayClasses.length > 3 && (
+                {todayClasses.length > 5 && (
                   <Button
                     onClick={() => navigate('/schedule')}
                     variant="ghost"
@@ -187,7 +187,7 @@ export default function Dashboard() {
               </div>
             ) : (
               <div className="space-y-3">
-                {todayEvents.slice(0, 3).map((event: any) => (
+                {todayEvents.slice(0, 5).map((event: any) => (
                   <div key={event.id} className="flex items-center justify-between p-3 bg-secondary/50 rounded-lg">
                     <div>
                       <p className="font-medium">{event.event_title}</p>
@@ -203,7 +203,7 @@ export default function Dashboard() {
                     </div>
                   </div>
                 ))}
-                {todayEvents.length > 3 && (
+                {todayEvents.length > 5 && (
                   <Button
                     onClick={() => navigate('/events')}
                     variant="ghost"

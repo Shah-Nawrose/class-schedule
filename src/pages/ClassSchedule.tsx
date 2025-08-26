@@ -259,9 +259,9 @@ export default function ClassSchedule() {
   };
 
   const toggleDayExpansion = (day: string) => {
-    setExpandedDays(prev => ({
+    setExpandedDays((prev) => ({
       ...prev,
-      [day]: !prev[day]
+      [day]: !prev[day],
     }));
   };
 
@@ -274,7 +274,7 @@ export default function ClassSchedule() {
     Saturday: 6,
     Sunday: 7,
   };
-  
+
   const sortedClasses = [...classes].sort((a, b) => {
     if (a.day !== b.day) {
       return (
@@ -522,127 +522,117 @@ export default function ClassSchedule() {
           ) : (
             <>
               {/* Desktop Table View */}
-              <div className="hidden lg:block rounded-lg border overflow-hidden">
+              {/* Desktop Table View */}
+              <div className="hidden lg:block rounded-xl border border-gray-200 shadow-md overflow-hidden">
                 <Table>
                   <TableHeader>
-                    <TableRow className="bg-table-header hover:bg-table-header">
-                      <TableHead className="text-primary-dark font-bold">
-                        Day
-                      </TableHead>
-                      <TableHead className="text-primary-dark font-bold">
-                        Time Slot
-                      </TableHead>
-                      <TableHead className="text-primary-dark font-bold">
-                        Course Code
-                      </TableHead>
-                      <TableHead className="text-primary-dark font-bold">
-                        Course Title
-                      </TableHead>
-                      <TableHead className="text-primary-dark font-bold">
-                        Teacher Code
-                      </TableHead>
-                      <TableHead className="text-primary-dark font-bold">
-                        Room
-                      </TableHead>
-                      <TableHead className="text-primary-dark font-bold">
-                        Section
-                      </TableHead>
-                      <TableHead className="text-primary-dark font-bold">
-                        Actions
-                      </TableHead>
+                    <TableRow className="bg-gray-100">
+                      <TableHead>Day</TableHead>
+                      <TableHead>Time Slot</TableHead>
+                      <TableHead>Course Code</TableHead>
+                      <TableHead>Course Title</TableHead>
+                      <TableHead>Teacher Code</TableHead>
+                      <TableHead>Room</TableHead>
+                      <TableHead>Section</TableHead>
+                      <TableHead>Actions</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {sortedClasses.map((classItem, index) => (
-                      <TableRow
-                        key={classItem.id}
-                        className={`${
-                          index % 2 === 0 ? "bg-table-row-even" : ""
-                        } hover:bg-table-row-hover transition-colors`}
-                      >
-                        <TableCell className="font-medium">
-                          {classItem.day}
-                        </TableCell>
-                        <TableCell>
-                          <div className="flex items-center gap-1">
-                            <Clock className="h-4 w-4 text-muted-foreground" />
-                            {classItem.start_time} - {classItem.end_time}
-                          </div>
-                        </TableCell>
-                        <TableCell>
-                          <span className="font-mono font-semibold text-primary">
+                    {Object.entries(classesByDay).map(([day, dayClasses]) =>
+                      dayClasses.map((classItem, index) => (
+                        <TableRow
+                          key={classItem.id}
+                          className={`transition-colors ${
+                            index % 2 === 0 ? "bg-white" : "bg-gray-50"
+                          } hover:bg-gray-100`}
+                        >
+                          {/* Merge day cell for first class of the day */}
+                          {index === 0 && (
+                            <TableCell
+                              rowSpan={dayClasses.length}
+                              className="font-medium align-middle"
+                            >
+                              {day}
+                            </TableCell>
+                          )}
+                          <TableCell>
+                            <div className="flex items-center gap-2">
+                              <Clock className="h-4 w-4 text-gray-400" />
+                              {classItem.start_time} - {classItem.end_time}
+                            </div>
+                          </TableCell>
+                          <TableCell className="font-mono font-semibold text-blue-600">
                             {classItem.course_code}
-                          </span>
-                        </TableCell>
-                        <TableCell className="max-w-xs">
-                          <span
-                            className="truncate block"
+                          </TableCell>
+                          <TableCell
+                            className="max-w-xs truncate"
                             title={classItem.course_title}
                           >
                             {classItem.course_title}
-                          </span>
-                        </TableCell>
-                        <TableCell>
-                          <div className="flex items-center gap-1">
-                            <User className="h-4 w-4 text-muted-foreground" />
-                            {classItem.teacher_code || "-"}
-                          </div>
-                        </TableCell>
-                        <TableCell>
-                          <div className="flex items-center gap-1">
-                            <MapPin className="h-4 w-4 text-muted-foreground" />
-                            {classItem.room || "-"}
-                          </div>
-                        </TableCell>
-                        <TableCell>{classItem.section || "-"}</TableCell>
-                        <TableCell>
-                          <div className="flex items-center gap-2">
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              onClick={() => handleEdit(classItem)}
-                              className="h-8 w-8 p-0"
-                            >
-                              <Edit className="h-4 w-4" />
-                            </Button>
-
-                            <AlertDialog>
-                              <AlertDialogTrigger asChild>
-                                <Button
-                                  variant="ghost"
-                                  size="sm"
-                                  className="h-8 w-8 p-0 text-destructive hover:text-destructive"
-                                >
-                                  <Trash2 className="h-4 w-4" />
-                                </Button>
-                              </AlertDialogTrigger>
-                              <AlertDialogContent>
-                                <AlertDialogHeader>
-                                  <AlertDialogTitle>
-                                    Delete Class
-                                  </AlertDialogTitle>
-                                  <AlertDialogDescription>
-                                    Are you sure you want to delete this class?
-                                    This action cannot be undone.
-                                  </AlertDialogDescription>
-                                </AlertDialogHeader>
-                                <AlertDialogFooter>
-                                  <AlertDialogCancel>Cancel</AlertDialogCancel>
-                                  <AlertDialogAction
-                                    onClick={() =>
-                                      deleteMutation.mutate(classItem.id)
-                                    }
-                                    className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                          </TableCell>
+                          <TableCell>
+                            <div className="flex items-center gap-1">
+                              <User className="h-4 w-4 text-gray-400" />
+                              {classItem.teacher_code || "-"}
+                            </div>
+                          </TableCell>
+                          <TableCell>
+                            <div className="flex items-center gap-1">
+                              <MapPin className="h-4 w-4 text-gray-400" />
+                              {classItem.room || "-"}
+                            </div>
+                          </TableCell>
+                          <TableCell>{classItem.section || "-"}</TableCell>
+                          <TableCell>
+                            <div className="flex items-center gap-2">
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => handleEdit(classItem)}
+                                className="h-8 w-8 p-0"
+                              >
+                                <Edit className="h-4 w-4" />
+                              </Button>
+                              <AlertDialog>
+                                <AlertDialogTrigger asChild>
+                                  <Button
+                                    variant="ghost"
+                                    size="sm"
+                                    className="h-8 w-8 p-0 text-red-600 hover:text-red-700"
                                   >
-                                    Delete
-                                  </AlertDialogAction>
-                                </AlertDialogFooter>
-                              </AlertDialogContent>
-                            </AlertDialog>
-                          </div>
-                        </TableCell>
-                      </TableRow>
-                    ))}
+                                    <Trash2 className="h-4 w-4" />
+                                  </Button>
+                                </AlertDialogTrigger>
+                                <AlertDialogContent>
+                                  <AlertDialogHeader>
+                                    <AlertDialogTitle>
+                                      Delete Class
+                                    </AlertDialogTitle>
+                                    <AlertDialogDescription>
+                                      Are you sure you want to delete this
+                                      class? This action cannot be undone.
+                                    </AlertDialogDescription>
+                                  </AlertDialogHeader>
+                                  <AlertDialogFooter>
+                                    <AlertDialogCancel>
+                                      Cancel
+                                    </AlertDialogCancel>
+                                    <AlertDialogAction
+                                      onClick={() =>
+                                        deleteMutation.mutate(classItem.id)
+                                      }
+                                      className="bg-red-600 text-white hover:bg-red-700"
+                                    >
+                                      Delete
+                                    </AlertDialogAction>
+                                  </AlertDialogFooter>
+                                </AlertDialogContent>
+                              </AlertDialog>
+                            </div>
+                          </TableCell>
+                        </TableRow>
+                      ))
+                    )}
                   </TableBody>
                 </Table>
               </div>
@@ -651,7 +641,7 @@ export default function ClassSchedule() {
               <div className="lg:hidden space-y-4">
                 {Object.entries(classesByDay).map(([day, dayClasses]) => (
                   <Card key={day} className="overflow-hidden">
-                    <CardHeader 
+                    <CardHeader
                       className="py-3 bg-muted/50 cursor-pointer"
                       onClick={() => toggleDayExpansion(day)}
                     >
@@ -664,11 +654,14 @@ export default function ClassSchedule() {
                         )}
                       </div>
                     </CardHeader>
-                    
+
                     {expandedDays[day] && (
                       <CardContent className="p-0">
                         {dayClasses.map((classItem) => (
-                          <div key={classItem.id} className="p-4 border-b last:border-b-0">
+                          <div
+                            key={classItem.id}
+                            className="p-4 border-b last:border-b-0"
+                          >
                             <div className="flex justify-between items-start mb-2">
                               <div className="font-semibold text-primary">
                                 {classItem.course_code}
@@ -699,12 +692,14 @@ export default function ClassSchedule() {
                                         Delete Class
                                       </AlertDialogTitle>
                                       <AlertDialogDescription>
-                                        Are you sure you want to delete this class?
-                                        This action cannot be undone.
+                                        Are you sure you want to delete this
+                                        class? This action cannot be undone.
                                       </AlertDialogDescription>
                                     </AlertDialogHeader>
                                     <AlertDialogFooter>
-                                      <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                      <AlertDialogCancel>
+                                        Cancel
+                                      </AlertDialogCancel>
                                       <AlertDialogAction
                                         onClick={() =>
                                           deleteMutation.mutate(classItem.id)
@@ -718,21 +713,21 @@ export default function ClassSchedule() {
                                 </AlertDialog>
                               </div>
                             </div>
-                            
+
                             <div className="text-sm mb-1 font-medium">
                               {classItem.course_title}
                             </div>
-                            
+
                             <div className="flex items-center text-sm text-muted-foreground mb-1">
                               <Clock className="h-3 w-3 mr-1" />
                               {classItem.start_time} - {classItem.end_time}
                             </div>
-                            
+
                             <div className="flex items-center text-sm text-muted-foreground mb-1">
                               <User className="h-3 w-3 mr-1" />
                               {classItem.teacher_code || "No teacher assigned"}
                             </div>
-                            
+
                             <div className="flex items-center text-sm text-muted-foreground">
                               <MapPin className="h-3 w-3 mr-1" />
                               {classItem.room || "No room assigned"}
